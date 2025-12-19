@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CatIflytek小助手</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg: #fff;
+            --bg2: #f8f9fa;
+            --text: #333;
+            --text2: #666;
+            --primary: #2196f3;
+            --border: #dee2e6;
+            --radius: 6px;
+            --shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        [data-theme="dark"] {
+            --bg: #1a1a1a;
+            --bg2: #2a2a2a;
+            --text: #fff;
+            --text2: #ccc;
+            --primary: #64b5f6;
+            --border: #444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            line-height: 1.5;
+            padding: 16px;
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-top: 8px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+            word-break: break-word;
+        }
+
+        .subtitle {
+            color: var(--text2);
+            margin: 0 auto 16px;
+            padding: 12px;
+            background: var(--bg2);
+            border-radius: var(--radius);
+            max-width: 800px;
+            border-left: 3px solid var(--primary);
+            word-break: break-word;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 12px 16px;
+            background: var(--bg2);
+            border-radius: var(--radius);
+            min-width: 100px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text2);
+            margin-top: 4px;
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
+            max-width: 100%;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            transition: 0.2s;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .cards-grid { grid-template-columns: 1fr; }
+            body { padding: 12px; }
+        }
+
+        .card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .card-badge {
+            padding: 4px 10px;
+            background: var(--primary);
+            color: white;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .card-type {
+            font-size: 0.75rem;
+            color: var(--text2);
+            background: var(--bg2);
+            padding: 3px 8px;
+            border-radius: 10px;
+            white-space: nowrap;
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: var(--text);
+            line-height: 1.4;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .card-desc {
+            color: var(--text2);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .card-path {
+            background: var(--bg2);
+            padding: 10px;
+            border-radius: var(--radius);
+            font-family: 'Courier New', Consolas, Monaco, monospace;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+            word-break: break-all;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            border: 1px solid var(--border);
+            max-width: 100%;
+            overflow: visible;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            white-space: nowrap;
+            min-width: 80px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-secondary {
+            background: var(--bg2);
+            color: var(--text);
+            border: 1px solid var(--border);
+            flex: 1;
+        }
+
+        .form-container {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .form-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-input {
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--bg);
+            color: var(--text);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .footer {
+            text-align: center;
+            color: var(--text2);
+            font-size: 0.85rem;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            word-break: break-word;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .theme-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            z-index: 100;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text);
+            color: white;
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            word-break: break-word;
+        }
+
+        .toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CatIflytek小助手</h1>
+            <p class="subtitle">快速跳转到Android系统设置页面</p>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="total-count">21</div>
+                    <div class="stat-label">总方法数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="custom-count">0</div>
+                    <div class="stat-label">自定义</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="attempt-count">0</div>
+                    <div class="stat-label">尝试次数</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="developer">开发者选项</button>
+            <button class="filter-btn" data-filter="about">关于设备</button>
+            <button class="filter-btn" data-filter="accessibility">无障碍</button>
+            <button class="filter-btn" data-filter="security">安全设置</button>
+            <button class="filter-btn" data-filter="vpn">VPN设置</button>
+            <button class="filter-btn" data-filter="apn">APN设置</button>
+            <button class="filter-btn" data-filter="credentials">受信任凭据</button>
+            <button class="filter-btn" data-filter="search">搜索栏</button>
+            <button class="filter-btn" data-filter="deviceadmin">设备管理</button>
+            <button class="filter-btn" data-filter="system">系统设置</button>
+            <button class="filter-btn" data-filter="suggestion">设置建议</button>
+            <button class="filter-btn" data-filter="nativesettings">原生界面</button>
+            <button class="filter-btn" data-filter="custom">自定义</button>
+        </div>
+
+        <div id="cards-container" class="cards-grid"></div>
+
+        <div class="form-container">
+            <div class="form-title">添加自定义Intent</div>
+            <div class="form-grid">
+                <input type="text" class="form-input" id="custom-package" placeholder="包名" value="com.android.settings">
+                <input type="text" class="form-input" id="custom-classname" placeholder="完整类名">
+                <input type="text" class="form-input" id="custom-name" placeholder="显示名称">
+                <input type="text" class="form-input" id="custom-desc" placeholder="描述信息">
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" id="clear-btn">清空</button>
+                <button class="btn btn-primary" id="add-btn">添加</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2023 CatIflytek小助手 | <span id="success-count">0</span> 成功 | <span id="total-attempts">0</span> 尝试</p>
+        </div>
+    </div>
+
+    <button class="theme-btn" id="theme-btn">🌙</button>
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 主题切换
+        const themeBtn = document.getElementById('theme-btn');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+        
+        function initTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved === 'dark' || (!saved && prefersDark.matches)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeBtn.textContent = '☀️';
+            }
+            
+            themeBtn.onclick = () => {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                if (isDark) {
+                    document.documentElement.removeAttribute('data-theme');
+                    themeBtn.textContent = '🌙';
+                    localStorage.setItem('theme', 'light');
+                    showToast('已切换到浅色主题', 'info');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    themeBtn.textContent = '☀️';
+                    localStorage.setItem('theme', 'dark');
+                    showToast('已切换到深色主题', 'info');
+                }
+            };
+        }
+
+        // 所有Intent方法
+        const intents = [
+            {id:1, title:"开发者选项 (Settings$DevelopmentSettingsActivity)", desc:"直接调用开发者选项Activity", path:"intent:#Intent;component=com.android.settings/.Settings$DevelopmentSettingsActivity;end", cat:"developer", type:"组件启动"},
+            {id:2, title:"开发者选项 (Settings$DevelopmentSettingsDashboardActivity)", desc:"新版开发者选项Dashboard", path:"intent:#Intent;component=com.android.settings/.Settings$DevelopmentSettingsDashboardActivity;end", cat:"developer", type:"组件启动"},
+            {id:3, title:"开发者选项 (DevelopmentSettings)", desc:"旧版开发者设置", path:"intent:#Intent;component=com.android.settings/.DevelopmentSettings;end", cat:"developer", type:"组件启动"},
+            {id:4, title:"开发者选项 (系统标准动作)", desc:"使用APPLICATION_DEVELOPMENT_SETTINGS动作", path:"intent:#Intent;action=android.settings.APPLICATION_DEVELOPMENT_SETTINGS;end", cat:"developer", type:"系统动作"},
+            {id:5, title:"开发者选项 (加载设置片段)", desc:"在SubSettings中加载DevelopmentSettingsDashboardFragment", path:"intent:#Intent;component=com.android.settings/.SubSettings;S.%3Asettings%3Ashow_fragment=com.android.settings.development.DevelopmentSettingsDashboardFragment;end", cat:"developer", type:"Fragment启动"},
+            {id:6, title:"开发者选项 (Activity+Fragment)", desc:"通过SettingsActivity加载开发者选项Fragment", path:"intent:#Intent;action=android.intent.action.MAIN;launchFlags=0x10810000;component=com.android.settings/.SettingsActivity;S.%3Asettings%3Ashow_fragment=com.android.settings.development.DevelopmentSettingsDashboardFragment;end", cat:"developer", type:"Activity+Fragment"},
+            {id:7, title:"关于设备 (DeviceInfoSettingsActivity)", desc:"设备信息设置", path:"intent:#Intent;component=com.android.settings/.Settings$DeviceInfoSettingsActivity;end", cat:"about", type:"组件启动"},
+            {id:8, title:"关于设备 (MyDeviceInfoActivity)", desc:"我的设备信息", path:"intent:#Intent;component=com.android.settings/.Settings$MyDeviceInfoActivity;end", cat:"about", type:"组件启动"},
+            {id:9, title:"无障碍设置 (AccessibilitySettingsActivity)", desc:"无障碍设置页面", path:"intent:#Intent;component=com.android.settings/.Settings$AccessibilitySettingsActivity;end", cat:"accessibility", type:"组件启动"},
+            {id:10, title:"安全设置 (SecurityDashboardActivity)", desc:"安全设置Dashboard", path:"intent:#Intent;component=com.android.settings/.Settings$SecurityDashboardActivity;end", cat:"security", type:"组件启动"},
+            {id:11, title:"VPN设置 (VpnSettingsActivity)", desc:"VPN设置页面", path:"intent:#Intent;component=com.android.settings/.Settings$VpnSettingsActivity;end", cat:"vpn", type:"组件启动"},
+            {id:12, title:"APN设置 (ApnSettingsActivity)", desc:"APN设置页面", path:"intent:#Intent;component=com.android.settings/.Settings$ApnSettingsActivity;end", cat:"apn", type:"组件启动"},
+            {id:13, title:"受信任凭据 (TrustedCredentialsSettingsActivity)", desc:"证书管理", path:"intent:#Intent;component=com.android.settings/.Settings$TrustedCredentialsSettingsActivity;end", cat:"credentials", type:"组件启动"},
+            {id:14, title:"设置搜索栏 (SearchActivity)", desc:"Android设置智能搜索", path:"intent:#Intent;component=com.android.settings.intelligence/com.android.settings.intelligence.search.SearchActivity;end", cat:"search", type:"组件启动"},
+            {id:15, title:"设备管理 (DeviceAdminSettingsActivity)", desc:"设备管理员设置", path:"intent:#Intent;component=com.android.settings/.Settings$DeviceAdminSettingsActivity;end", cat:"deviceadmin", type:"组件启动"},
+            {id:16, title:"设备管理 (DeviceAdminSettings)", desc:"设备管理员设置类", path:"intent:#Intent;component=com.android.settings/.DeviceAdminSettings;end", cat:"deviceadmin", type:"组件启动"},
+            {id:17, title:"设备管理 (DeviceAdminAdd)", desc:"设备管理员添加页面", path:"intent:#Intent;component=com.android.settings/.applications.specialaccess.deviceadmin.DeviceAdminAdd;end", cat:"deviceadmin", type:"组件启动"},
+            {id:18, title:"设备管理 (EnterprisePrivacySettingsActivity)", desc:"企业隐私设置", path:"intent:#Intent;component=com.android.settings/.Settings$EnterprisePrivacySettingsActivity;end", cat:"deviceadmin", type:"组件启动"},
+            {id:19, title:"系统设置 (SystemDashboardActivity)", desc:"系统设置Dashboard", path:"intent:#Intent;component=com.android.settings/.Settings$SystemDashboardActivity;end", cat:"system", type:"组件启动"},
+            {id:20, title:"设置建议 (SearchActivity)", desc:"设置建议页面", path:"intent:#Intent;component=com.android.settings.intelligence/com.android.settings.intelligence.search.SearchActivity;end", cat:"suggestion", type:"组件启动"},
+            {id:21, title:"原生设置界面 (SettingsHomepageActivity)", desc:"Android设置主页", path:"intent:#Intent;component=com.android.settings/.homepage.SettingsHomepageActivity;end", cat:"nativesettings", type:"组件启动"}
+        ];
+
+        // 应用状态
+        const state = {
+            attempts: 0,
+            successes: 0,
+            filter: 'all',
+            customIntents: JSON.parse(localStorage.getItem('customIntents') || '[]')
+        };
+
+        // 分类名称
+        const catNames = {
+            developer: '开发者选项',
+            about: '关于设备',
+            accessibility: '无障碍',
+            security: '安全设置',
+            vpn: 'VPN设置',
+            apn: 'APN设置',
+            credentials: '受信任凭据',
+            search: '搜索栏',
+            deviceadmin: '设备管理',
+            system: '系统设置',
+            suggestion: '设置建议',
+            nativesettings: '原生界面',
+            custom: '自定义'
+        };
+
+        // 渲染卡片
+        function renderCards() {
+            const container = document.getElementById('cards-container');
+            const allIntents = [...intents, ...state.customIntents.map((c, i) => ({...c, id: 1000+i, cat: 'custom', type: '自定义'}))];
+            const filtered = state.filter === 'all' ? allIntents : allIntents.filter(i => i.cat === state.filter);
+            
+            let html = '';
+            filtered.forEach(item => {
+                // 对路径中的特殊字符进行转义，避免HTML解析问题
+                const escapedPath = item.path.replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+                
+                html += `
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-badge">${catNames[item.cat] || '其他'}</div>
+                            <div class="card-type">${item.type}</div>
+                        </div>
+                        <div class="card-title">${item.title}</div>
+                        <div class="card-desc">${item.desc}</div>
+                        <div class="card-path">${item.path}</div>
+                        <div class="card-actions">
+                            <button class="btn btn-primary" onclick="tryLaunch('${escapedPath}', ${item.id})">尝试跳转</button>
+                            <button class="btn btn-secondary" onclick="copyPath('${escapedPath}', ${item.id})">复制路径</button>
+                            ${item.cat === 'custom' ? `<button class="btn btn-secondary" onclick="deleteIntent(${item.id})">删除</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            updateStats();
+        }
+
+        // 更新统计
+        function updateStats() {
+            const total = intents.length + state.customIntents.length;
+            document.getElementById('total-count').textContent = total;
+            document.getElementById('custom-count').textContent = state.customIntents.length;
+            document.getElementById('attempt-count').textContent = state.attempts;
+            document.getElementById('success-count').textContent = state.successes;
+            document.getElementById('total-attempts').textContent = state.attempts;
+        }
+
+        // 尝试跳转
+        function tryLaunch(path, id) {
+            state.attempts++;
+            showToast(`尝试跳转中... (ID: ${id})`, 'info');
+            
+            try {
+                window.location.href = path;
+                setTimeout(() => showToast('跳转可能被阻止', 'warning'), 1000);
+            } catch(e) {
+                showToast(`跳转失败`, 'error');
+            }
+            
+            updateStats();
+        }
+
+        // 复制路径
+        function copyPath(text, id) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(`已复制到剪贴板`, 'success');
+            });
+        }
+
+        // 删除自定义Intent
+        function deleteIntent(id) {
+            state.customIntents = state.customIntents.filter((_, i) => 1000+i !== id);
+            localStorage.setItem('customIntents', JSON.stringify(state.customIntents));
+            renderCards();
+            showToast('已删除', 'success');
+        }
+
+        // 添加自定义Intent
+        document.getElementById('add-btn').onclick = () => {
+            const pkg = document.getElementById('custom-package').value.trim();
+            const cls = document.getElementById('custom-classname').value.trim();
+            const name = document.getElementById('custom-name').value.trim();
+            const desc = document.getElementById('custom-desc').value.trim();
+            
+            if (!pkg || !cls) {
+                showToast('包名和类名不能为空', 'error');
+                return;
+            }
+            
+            const path = `intent:#Intent;component=${pkg}/${cls};end`;
+            state.customIntents.push({
+                title: name || `打开 ${cls}`,
+                desc: desc || `自定义Intent: ${pkg}/${cls}`,
+                path: path
+            });
+            
+            localStorage.setItem('customIntents', JSON.stringify(state.customIntents));
+            renderCards();
+            showToast('添加成功', 'success');
+            
+            // 清空表单
+            document.getElementById('custom-classname').value = '';
+            document.getElementById('custom-name').value = '';
+            document.getElementById('custom-desc').value = '';
+        };
+
+        // 清空表单
+        document.getElementById('clear-btn').onclick = () => {
+            document.getElementById('custom-package').value = 'com.android.settings';
+            document.getElementById('custom-classname').value = '';
+            document.getElementById('custom-name').value = '';
+            document.getElementById('custom-desc').value = '';
+            showToast('表单已清空', 'info');
+        };
+
+        // Toast提示
+        let toastTimer = null;
+        function showToast(msg, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = 'toast';
+            if (type === 'success') toast.style.background = '#4CAF50';
+            else if (type === 'error') toast.style.background = '#F44336';
+            else if (type === 'warning') toast.style.background = '#FF9800';
+            else toast.style.background = '#333';
+            
+            toast.classList.add('show');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // 筛选按钮
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                state.filter = btn.dataset.filter;
+                renderCards();
+            };
+        });
+
+        // 初始化
+        function init() {
+            initTheme();
+            renderCards();
+            setTimeout(() => showToast('Android Intent小助手已就绪', 'info'), 500);
+        }
+
+        // 页面加载
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
