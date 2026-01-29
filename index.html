@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>喵~ Android Intent跳转小助手</title>
     <style>
-        /* 新增的设备检测遮罩样式 */
         .device-warning-overlay {
             position: fixed;
             top: 0;
@@ -169,7 +168,6 @@
             50% { transform: scale(1.2); }
         }
 
-        /* 粉色主题的设备警告样式 */
         body.pink-theme .device-warning-container {
             background: linear-gradient(135deg, #ff9ec6, #ff7eb3);
         }
@@ -185,7 +183,6 @@
         }
 
         :root {
-            /* 蓝色主题 (默认) */
             --primary: #6ab7ff;
             --primary-dark: #4a9eff;
             --secondary: #6ab7ff;
@@ -210,8 +207,6 @@
                 rgba(50, 130, 240, 0.4) 100%
             );
         }
-
-        /* 粉色主题变量 */
         body.pink-theme {
             --primary: #ff9ec6;
             --primary-dark: #ff7eb3;
@@ -350,7 +345,6 @@
             display: inline-block;
         }
 
-        /* 多彩渐变动画效果 */
         .creator-text {
             background: linear-gradient(
                 90deg,
@@ -394,7 +388,6 @@
             }
         }
 
-        /* 慢速多彩渐变动画效果 */
         .creator-text-slow {
             background: linear-gradient(
                 90deg,
@@ -657,7 +650,6 @@
             }
         }
 
-        /* 折叠面板样式 */
         .collapsible-section {
             margin-bottom: 25px;
             animation: fadeInUp 0.8s ease-out both;
@@ -920,7 +912,6 @@
             border: 1px solid rgba(var(--primary-rgb, 106, 183, 255), 0.1);
         }
 
-        /* 修改卡片标题样式，解决长标题显示不全的问题 */
         .card-title {
             font-size: 1.2rem;
             font-weight: 700;
@@ -928,16 +919,15 @@
             color: var(--dark);
             line-height: 1.4;
             display: -webkit-box;
-            -webkit-line-clamp: 2; /* 限制最多显示2行 */
+            -webkit-line-clamp: 2; 
             -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
-            min-height: 2.8em; /* 确保至少有2行的高度 */
+            min-height: 2.8em; 
         }
 
-        /* 鼠标悬停时显示完整标题 */
         .card-title:hover {
-            -webkit-line-clamp: unset; /* 悬停时取消行数限制 */
+            -webkit-line-clamp: unset; 
             overflow: visible;
             position: relative;
             z-index: 2;
@@ -948,22 +938,21 @@
             margin-bottom: 8px;
         }
 
-        /* 卡片描述也需要调整，因为标题展开后会占用更多空间 */
         .card-desc {
             color: #666;
             font-size: 1rem;
             margin-bottom: 22px;
             line-height: 1.6;
             display: -webkit-box;
-            -webkit-line-clamp: 3; /* 限制描述最多显示3行 */
+            -webkit-line-clamp: 3; 
             -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
-            min-height: 4.8em; /* 确保至少有3行的高度 */
+            min-height: 4.8em; 
         }
 
         .card-desc:hover {
-            -webkit-line-clamp: unset; /* 悬停时取消行数限制 */
+            -webkit-line-clamp: unset; 
             overflow: visible;
             position: relative;
             z-index: 2;
@@ -1113,7 +1102,6 @@
             transition: background 0.5s ease;
         }
 
-        /* 修改Toast样式，支持上滑进入和下滑离开 */
         .toast {
             position: fixed;
             bottom: 40px;
@@ -1190,7 +1178,6 @@
             100% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 106, 183, 255), 0); }
         }
 
-        /* 右下角：竖向椭圆控制面板 */
         .control-ellipse {
             position: fixed;
             bottom: 30px;
@@ -1257,6 +1244,38 @@
             font-size: 24px;
         }
 
+        .control-btn.github-link {
+            background: linear-gradient(135deg, #6e5494, #4078c0);
+            box-shadow: 0 6px 15px rgba(110, 84, 148, 0.3);
+        }
+
+        .control-btn.github-link:hover {
+            background: linear-gradient(135deg, #4078c0, #6e5494);
+            box-shadow: 0 10px 25px rgba(110, 84, 148, 0.5);
+        }
+
+        body.pink-theme .control-btn.github-link {
+            background: linear-gradient(135deg, #ff9ec6, #ff7eb3);
+            box-shadow: 0 6px 15px rgba(255, 158, 198, 0.3);
+        }
+
+        body.pink-theme .control-btn.github-link:hover {
+            background: linear-gradient(135deg, #ff7eb3, #ff9ec6);
+            box-shadow: 0 10px 25px rgba(255, 158, 198, 0.5);
+        }
+
+        .control-btn.github-link svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+            filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.3));
+            transition: transform 0.3s ease;
+        }
+
+        .control-btn.github-link:hover svg {
+            transform: scale(1.1) rotate(5deg);
+        }
+
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -1277,7 +1296,6 @@
         .card:nth-child(7) { animation-delay: 0.7s; }
         .card:nth-child(8) { animation-delay: 0.8s; }
 
-        /* 添加自定义Intent的表单样式 */
         .custom-form-container {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
@@ -1409,7 +1427,6 @@
     </style>
 </head>
 <body>
-    <!-- 设备检测警告遮罩 -->
     <div class="device-warning-overlay" id="device-warning-overlay">
         <div class="device-warning-container">
             <div class="device-warning-content">
@@ -1466,10 +1483,8 @@
         </div>
 
         <div class="cards-container" id="cards-container">
-            <!-- 折叠区域将通过JavaScript动态生成 -->
         </div>
 
-        <!-- 将自定义Intent表单移动到卡片区域下方 -->
         <div class="custom-form-container">
             <div class="form-title">
                 <span class="icon">📱</span>
@@ -1522,19 +1537,33 @@
         </div>
 
         <div class="footer">
-            <p>喵~ 特别鸣谢：<a href="https://project.caofangkuai666.top/zyb/" target="_blank" title="喵~ 点击跳转到无处不在的草方块的灵感页面喵~" style="color: var(--primary); text-decoration: none; border-bottom: 2px dotted rgba(var(--primary-rgb, 106, 183, 255), 0.3); transition: var(--transition); padding: 0 2px; margin: 0 3px;"><strong>无处不在的草方块</strong></a> 提供灵感喵~ 喵呜呜！</p>
-            <p>© 2025 CatIflytek小助手 | 使用统计：<span id="success-count">0</span> 次成功喵 | <span id="attempt-count">0</span> 次尝试喵</p>
+            <p style="margin-top: 15px;">
+                <a href="https://github.com/yyb0119/yyb0119.github.io" target="_blank" 
+                   style="display: inline-flex; align-items: center; gap: 8px; color: var(--primary); text-decoration: none; background: rgba(var(--primary-rgb, 106, 183, 255), 0.1); padding: 10px 20px; border-radius: 25px; border: 2px solid rgba(var(--primary-rgb, 106, 183, 255), 0.3); transition: var(--transition);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="var(--primary)" style="transition: fill 0.3s ease;">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    <span style="font-weight: 700; color: var(--primary); transition: color 0.3s ease;">访问GitHub项目喵～</span>
+                    <span style="font-size: 0.9em; opacity: 0.8; color: var(--primary);">→</span>
+                </a>
+            </p>
+            
+            <p style="margin-top: 15px;">© 2025 CatIflytek小助手 | 使用统计：<span id="success-count">0</span> 次成功喵 | <span id="attempt-count">0</span> 次尝试喵</p>
             <p class="creator-footer">Created by <span class="creator-text-slow">CatIflytek小助手</span> yyb | 基于标准Android Intent实现喵~</p>
         </div>
     </div>
 
-    <!-- 右下角：竖向椭圆控制面板 -->
     <div class="control-ellipse">
         <button class="control-btn theme-toggle" id="theme-toggle-btn" title="切换主题喵~">
             🌙
         </button>
         <button class="control-btn random-bg" id="random-bg-btn" title="随机背景喵~">
             🎲
+        </button>
+        <button class="control-btn github-link" id="github-link-btn" title="访问GitHub项目喵~">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white" style="filter: drop-shadow(0 0 1px rgba(0,0,0,0.3));">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
         </button>
     </div>
 
@@ -1931,6 +1960,7 @@
         // 控制按钮
         const themeToggleBtn = document.getElementById('theme-toggle-btn');
         const randomBgBtn = document.getElementById('random-bg-btn');
+        const githubLinkBtn = document.getElementById('github-link-btn');
         
         function initThemeSystem() {
             // 从本地存储加载主题设置
@@ -2003,6 +2033,14 @@
                 setBackground(newIndex);
             });
             
+            // GitHub项目按钮
+            githubLinkBtn.addEventListener('click', () => {
+                showToast('喵~ 正在跳转到GitHub项目页面...', 'info');
+                setTimeout(() => {
+                    window.open('https://github.com/yyb0119/yyb0119.github.io', '_blank');
+                }, 500);
+            });
+            
             // 键盘快捷键
             document.addEventListener('keydown', (e) => {
                 if (e.key === 't' || e.key === 'T') {
@@ -2016,6 +2054,12 @@
                     } while (newIndex === currentBgIndex && backgrounds.length > 1);
                     
                     setBackground(newIndex);
+                }
+                
+                // 添加GitHub快捷键 G
+                if (e.key === 'g' || e.key === 'G') {
+                    window.open('https://github.com/yyb0119/yyb0119.github.io', '_blank');
+                    showToast('喵~ 已打开GitHub项目页面！', 'success');
                 }
             });
         }
@@ -2172,7 +2216,6 @@
                     <div class="section-toggle">▼</div>
                 </div>
                 <div class="section-content ${isExpanded ? 'expanded' : ''}" id="content-${category}">
-                    <!-- 卡片内容将通过JavaScript动态生成 -->
                 </div>
             `;
             
