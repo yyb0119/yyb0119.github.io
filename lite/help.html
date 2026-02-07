@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>帮助中心</title>
+    <style>
+        /* 复用原页面核心样式变量，保证UI一致性 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg: #fff;
+            --bg2: #f8f9fa;
+            --text: #333;
+            --text2: #666;
+            --primary: #2196f3;
+            --primary-light: #42a5f5;
+            --primary-dark: #1976d2;
+            --border: #dee2e6;
+            --radius: 8px;
+            --radius-lg: 12px;
+            --shadow: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-hover: 0 4px 12px rgba(0,0,0,0.12);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg: #1a1a1a;
+            --bg2: #2a2a2a;
+            --text: #fff;
+            --text2: #ccc;
+            --primary: #64b5f6;
+            --primary-light: #90caf9;
+            --primary-dark: #42a5f5;
+            --border: #444;
+            --shadow: 0 2px 8px rgba(0,0,0,0.2);
+            --shadow-hover: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* 全局主题动画 */
+        html, body {
+            transition: var(--transition);
+        }
+
+        /* 添加背景图片样式 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            /* 背景图片设置 */
+            background-image: url('http://fuckiflytek.jkun.cf/picture.jpg');
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            /* 增加背景遮罩，保证文字可读性 */
+            position: relative;
+            line-height: 1.6;
+            padding: 16px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 背景遮罩层 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.85); /* 浅色主题遮罩 */
+            z-index: -1;
+            transition: var(--transition);
+        }
+
+        /* 深色主题下的遮罩调整 */
+        [data-theme="dark"] body::before {
+            background-color: rgba(26, 26, 26, 0.9); /* 深色主题遮罩 */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            /* 增加容器背景，提升内容可读性 */
+            background: rgba(var(--bg), 0.9);
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-top: 8px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: var(--text2);
+            margin: 0 auto 16px;
+            padding: 12px 16px;
+            background: var(--bg2);
+            border-radius: var(--radius);
+            max-width: 800px;
+            border-left: 4px solid var(--primary);
+            word-break: break-word;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        /* 常见问题区域样式 */
+        .faq-section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* 折叠面板样式 */
+        .accordion {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .accordion-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .accordion-item:hover {
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary-light);
+        }
+
+        .accordion-header {
+            padding: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .accordion-header:hover {
+            color: var(--primary);
+        }
+
+        .accordion-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-content {
+            padding: 0 16px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+            color: var(--text2);
+            border-top: 1px solid var(--border);
+        }
+
+        .accordion-content.show {
+            padding: 0 16px 16px;
+            max-height: 500px;
+        }
+
+        .accordion-body {
+            line-height: 1.6;
+            padding-top: 12px;
+        }
+
+        /* 反馈区域样式 */
+        .feedback-section {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .feedback-section:hover {
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary-light);
+        }
+
+        .feedback-note {
+            margin-top: 12px;
+            padding: 12px;
+            background: var(--bg2);
+            border-radius: var(--radius);
+            font-size: 0.85rem;
+            color: var(--text2);
+            border-left: 3px solid var(--primary);
+        }
+
+        /* 主题按钮样式（复用原页面） */
+        .theme-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            z-index: 100;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-btn:hover {
+            transform: rotate(15deg) scale(1.05);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Toast提示（保留，用于主题切换等轻提示） */
+        .toast {
+            position: fixed;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--text);
+            color: white;
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            z-index: 100;
+            opacity: 0;
+            transition: var(--transition);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            word-break: break-word;
+            box-shadow: var(--shadow);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .footer {
+            text-align: center;
+            color: var(--text2);
+            font-size: 0.85rem;
+            margin-top: 24px;
+            padding: 16px 0;
+            border-top: 1px solid var(--border);
+            word-break: break-word;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            .container {
+                padding: 12px;
+            }
+            .modal-container {
+                padding: 20px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Catiflytek跳转助手 - 帮助中心</h1>
+            <p class="subtitle">使用过程中遇到的问题，可参考以下说明</p>
+        </header>
+
+        <!-- 常见问题区域 -->
+        <div class="faq-section">
+            <div class="section-title">常见问题</div>
+            <div class="accordion">
+                <!-- 问题1 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>为什么点击"尝试跳转"没有反应？</span>
+                        <span class="accordion-icon">➕</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            1. 部分浏览器限制了Intent协议的跳转，已知支持的浏览器：悟空浏览器、今日头条(含极速版)、夸克；<br>
+                            2. 不支持的浏览器：WPS、QQ、Edge、Via（部分版本可能支持）；<br>
+                            3. 安卓系统版本或厂商定制系统可能限制了某些设置页面的直接跳转；<br>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 问题2 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>自定义Intent需要填写什么格式的内容？</span>
+                        <span class="accordion-icon">➕</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            - 包名：通常为系统设置的包名 <code>com.android.settings</code>，也可填写其他应用包名；<br>
+                            - 完整类名：需要填写设置页面的完整Activity类名，例如：<code>.Settings$DevelopmentSettingsActivity</code>；<br>
+                            - 示例：包名填 <code>com.android.settings</code>，类名填 <code>.Settings$DevelopmentSettingsActivity</code>，即可生成开发者选项的Intent路径。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 问题3 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>自定义的Intent可以保存吗？</span>
+                        <span class="accordion-icon">➕</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            1. 自定义的Intent会保存在浏览器缓存（Cookie）中，清除浏览器缓存会导致数据丢失；<br>
+                            2. 不同浏览器/设备之间的自定义Intent数据不互通；<br>
+                            3. 建议重要的自定义Intent路径手动复制保存到本地。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 未知问题反馈区域（移除邮箱相关内容） -->
+        <div class="feedback-section">
+            <div class="section-title">未知问题反馈</div>
+            <p>如果遇到上述未覆盖的问题，请参考常见问题排查或联系相关技术支持。</p>
+        </div>
+
+        <div class="footer">
+            <p>© 2026 Catiflytek 跳转助手</p>
+        </div>
+    </div>
+
+    <!-- 主题切换按钮（复用原页面） -->
+    <button class="theme-btn" id="theme-btn">🌙</button>
+    <!-- Toast提示框（保留，用于轻提示） -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 复用原页面的主题切换逻辑
+        const themeBtn = document.getElementById('theme-btn');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+        
+        function initTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved === 'dark' || (!saved && prefersDark.matches)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeBtn.textContent = '☀️';
+            }
+            
+            themeBtn.onclick = () => {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                if (isDark) {
+                    document.documentElement.removeAttribute('data-theme');
+                    themeBtn.textContent = '🌙';
+                    localStorage.setItem('theme', 'light');
+                    showToast('已切换到浅色主题', 'info');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    themeBtn.textContent = '☀️';
+                    localStorage.setItem('theme', 'dark');
+                    showToast('已切换到深色主题', 'info');
+                }
+            };
+        }
+
+        // 折叠面板切换逻辑
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.accordion-icon');
+            
+            // 关闭其他所有面板
+            document.querySelectorAll('.accordion-content').forEach(item => {
+                if (item !== content) {
+                    item.classList.remove('show');
+                    item.previousElementSibling.querySelector('.accordion-icon').textContent = '➕';
+                }
+            });
+            
+            // 切换当前面板
+            content.classList.toggle('show');
+            icon.textContent = content.classList.contains('show') ? '➖' : '➕';
+        }
+
+        // 保留原Toast提示逻辑（用于主题切换等轻提示）
+        let toastTimer = null;
+        function showToast(msg, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = 'toast';
+            
+            if (type === 'success') toast.style.background = '#4CAF50';
+            else if (type === 'error') toast.style.background = '#F44336';
+            else if (type === 'warning') toast.style.background = '#FF9800';
+            else toast.style.background = '#333';
+            
+            toast.classList.add('show');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // 页面初始化
+        function init() {
+            initTheme();
+            setTimeout(() => showToast('帮助中心已加载完成', 'info'), 500);
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CatIflytek小助手</title>
+    <title>Android Intent跳转助手</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -13,9 +13,15 @@
             --text: #333;
             --text2: #666;
             --primary: #2196f3;
+            --primary-light: #42a5f5;
+            --primary-dark: #1976d2;
             --border: #dee2e6;
-            --radius: 6px;
-            --shadow: 0 2px 6px rgba(0,0,0,0.08);
+            --radius: 8px;
+            --radius-lg: 12px;
+            --shadow: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-hover: 0 4px 12px rgba(0,0,0,0.12);
+            /* 动画过渡时间 */
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         [data-theme="dark"] {
@@ -24,30 +30,86 @@
             --text: #fff;
             --text2: #ccc;
             --primary: #64b5f6;
+            --primary-light: #90caf9;
+            --primary-dark: #42a5f5;
             --border: #444;
+            --shadow: 0 2px 8px rgba(0,0,0,0.2);
+            --shadow-hover: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* 主题切换全局动画 */
+        html, body {
+            transition: var(--transition);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             color: var(--text);
-            background: var(--bg);
+            /* 使用指定图片作为背景 */
+            background: var(--bg) url('http://fuckiflytek.jkun.cf/picture.jpg') no-repeat center center fixed;
+            background-size: cover;
             line-height: 1.5;
             padding: 16px;
             min-height: 100vh;
-            transition: background 0.3s, color 0.3s;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 添加半透明覆盖层，确保文字可读性 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.85); /* 浅色覆盖层 */
+            z-index: -1;
+            transition: var(--transition);
+        }
+
+        [data-theme="dark"] body::before {
+            background: rgba(26, 26, 26, 0.85); /* 深色覆盖层 */
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
+            position: relative;
+            z-index: 1;
         }
 
         header {
             text-align: center;
             margin-bottom: 24px;
             padding-top: 8px;
+            position: relative; /* 新增：为帮助按钮定位 */
+        }
+
+        /* 新增：帮助按钮样式 */
+        .help-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 8px 12px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: var(--transition);
+        }
+        .help-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
         }
 
         h1 {
@@ -55,17 +117,28 @@
             color: var(--primary);
             margin-bottom: 8px;
             word-break: break-word;
+            /* 新增：标题渐变效果 */
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .subtitle {
             color: var(--text2);
             margin: 0 auto 16px;
-            padding: 12px;
+            padding: 12px 16px;
             background: var(--bg2);
             border-radius: var(--radius);
             max-width: 800px;
-            border-left: 3px solid var(--primary);
+            border-left: 4px solid var(--primary);
             word-break: break-word;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            backdrop-filter: blur(10px); /* 添加毛玻璃效果 */
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .subtitle:hover {
+            box-shadow: var(--shadow-hover);
         }
 
         .stats {
@@ -82,6 +155,16 @@
             background: var(--bg2);
             border-radius: var(--radius);
             min-width: 100px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(5px); /* 添加毛玻璃效果 */
+            -webkit-backdrop-filter: blur(5px);
+        }
+        .stat-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
         }
 
         .stat-value {
@@ -94,6 +177,8 @@
             font-size: 0.85rem;
             color: var(--text2);
             margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .filters {
@@ -114,13 +199,36 @@
             cursor: pointer;
             font-size: 0.85rem;
             white-space: nowrap;
-            transition: 0.2s;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px); /* 添加毛玻璃效果 */
+            -webkit-backdrop-filter: blur(5px);
         }
-
+        /* 新增：按钮hover动效 */
+        .filter-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            transition: var(--transition);
+        }
+        .filter-btn:hover::after {
+            left: 100%;
+        }
+        .filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
         .filter-btn.active {
             background: var(--primary);
             color: white;
             border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
         }
 
         .cards-grid {
@@ -133,16 +241,56 @@
         @media (max-width: 768px) {
             .cards-grid { grid-template-columns: 1fr; }
             body { padding: 12px; }
+            .help-btn { /* 移动端适配帮助按钮 */
+                position: static;
+                margin-bottom: 12px;
+                display: inline-block;
+            }
+            header {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
         }
 
         .card {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
+            background: rgba(255, 255, 255, 0.9); /* 改为半透明背景 */
+            border: 1px solid rgba(222, 226, 230, 0.5); /* 半透明边框 */
+            border-radius: var(--radius-lg);
             padding: 16px;
             box-shadow: var(--shadow);
             word-break: break-word;
             overflow-wrap: break-word;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px); /* 添加毛玻璃效果 */
+            -webkit-backdrop-filter: blur(10px);
+        }
+        /* 新增：卡片hover动效 */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary-light);
+        }
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        [data-theme="dark"] .card {
+            background: rgba(42, 42, 42, 0.9); /* 深色主题卡片背景 */
+            border: 1px solid rgba(68, 68, 68, 0.5);
         }
 
         .card-header {
@@ -158,10 +306,11 @@
             padding: 4px 10px;
             background: var(--primary);
             color: white;
-            border-radius: 12px;
+            border-radius: 20px;
             font-size: 0.75rem;
             font-weight: 500;
             white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
         }
 
         .card-type {
@@ -171,6 +320,7 @@
             padding: 3px 8px;
             border-radius: 10px;
             white-space: nowrap;
+            border: 1px solid var(--border);
         }
 
         .card-title {
@@ -194,7 +344,7 @@
 
         .card-path {
             background: var(--bg2);
-            padding: 10px;
+            padding: 12px;
             border-radius: var(--radius);
             font-family: 'Courier New', Consolas, Monaco, monospace;
             font-size: 0.8rem;
@@ -205,6 +355,11 @@
             border: 1px solid var(--border);
             max-width: 100%;
             overflow: visible;
+            transition: var(--transition);
+        }
+        .card-path:hover {
+            border-color: var(--primary);
+            background: rgba(33, 150, 243, 0.05);
         }
 
         .card-actions {
@@ -219,15 +374,44 @@
             border-radius: var(--radius);
             cursor: pointer;
             font-size: 0.85rem;
-            transition: 0.2s;
+            transition: var(--transition);
             white-space: nowrap;
             min-width: 80px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        /* 新增：按钮点击波纹效果 */
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        .btn:active::after {
+            width: 200px;
+            height: 200px;
+            opacity: 0;
         }
 
         .btn-primary {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
             color: white;
             flex: 1;
+            box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
         }
 
         .btn-secondary {
@@ -236,13 +420,32 @@
             border: 1px solid var(--border);
             flex: 1;
         }
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--bg);
+            transform: translateY(-2px);
+        }
 
         .form-container {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 16px;
+            background: rgba(255, 255, 255, 0.9); /* 改为半透明背景 */
+            border: 1px solid rgba(222, 226, 230, 0.5);
+            border-radius: var(--radius-lg);
+            padding: 20px;
             margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            backdrop-filter: blur(10px); /* 添加毛玻璃效果 */
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .form-container:hover {
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary-light);
+        }
+
+        [data-theme="dark"] .form-container {
+            background: rgba(42, 42, 42, 0.9); /* 深色主题表单背景 */
+            border: 1px solid rgba(68, 68, 68, 0.5);
         }
 
         .form-title {
@@ -250,6 +453,16 @@
             font-size: 1.1rem;
             margin-bottom: 16px;
             color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .form-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 2px;
         }
 
         .form-grid {
@@ -260,13 +473,23 @@
         }
 
         .form-input {
-            padding: 8px;
+            padding: 10px 12px;
             border: 1px solid var(--border);
             border-radius: var(--radius);
             background: var(--bg);
             color: var(--text);
             width: 100%;
             box-sizing: border-box;
+            transition: var(--transition);
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+        .form-input::placeholder {
+            color: var(--text2);
+            opacity: 0.7;
         }
 
         .form-actions {
@@ -280,14 +503,23 @@
             color: var(--text2);
             font-size: 0.85rem;
             margin-top: 24px;
-            padding-top: 16px;
-            border-top: 1px solid var(--border);
+            padding: 16px;
             word-break: break-word;
+            background: var(--bg2);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(5px); /* 添加毛玻璃效果 */
+            -webkit-backdrop-filter: blur(5px);
         }
 
         .footer a {
             color: var(--primary);
             text-decoration: none;
+            transition: var(--transition);
+        }
+        .footer a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
         }
 
         .theme-btn {
@@ -297,40 +529,62 @@
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
             color: white;
             border: none;
             cursor: pointer;
             font-size: 1.2rem;
             z-index: 100;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px); /* 添加毛玻璃效果 */
+            -webkit-backdrop-filter: blur(5px);
+        }
+        .theme-btn:hover {
+            transform: rotate(15deg) scale(1.05);
+            box-shadow: var(--shadow-hover);
         }
 
         .toast {
             position: fixed;
             bottom: 70px;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateY(20px);
             background: var(--text);
             color: white;
             padding: 10px 20px;
             border-radius: var(--radius);
             z-index: 100;
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: var(--transition);
             max-width: 400px;
             width: 90%;
             text-align: center;
             word-break: break-word;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px); /* 添加毛玻璃效果 */
+            -webkit-backdrop-filter: blur(10px);
         }
-
-        .toast.show { opacity: 1; }
+        .toast.show { 
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>CatIflytek小助手</h1>
+            <!-- 新增：帮助按钮 -->
+            <button class="help-btn" onclick="window.location.href='help.html'">
+                📖 帮助
+            </button>
+            <h1>Catiflytek跳转助手</h1>
             <p class="subtitle">快速跳转到Android系统设置页面</p>
+            <p class="subtitle">适用于 悟空浏览器，今日头条(含极速版)，夸克。非全部，其他未测试。</p>
+            <p class="subtitle">不适用于(已知) WPS，QQ，Edge，Via(存疑)</p>
             <div class="stats">
                 <div class="stat-item">
                     <div class="stat-value" id="total-count">21</div>
@@ -381,7 +635,7 @@
         </div>
 
         <div class="footer">
-            <p>© 2026 CatIflytek小助手 | <span id="success-count">0</span> 成功 | <span id="total-attempts">0</span> 尝试</p>
+            <p>© 2026 Catiflytek 小助手丨 <span id="success-count">0</span> 成功 | <span id="total-attempts">0</span> 尝试</p>
         </div>
     </div>
 
@@ -402,6 +656,7 @@
             
             themeBtn.onclick = () => {
                 const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                // 新增：主题切换时的过渡动画（通过延迟确保动画生效）
                 if (isDark) {
                     document.documentElement.removeAttribute('data-theme');
                     themeBtn.textContent = '🌙';
@@ -528,6 +783,10 @@
         function copyPath(text, id) {
             navigator.clipboard.writeText(text).then(() => {
                 showToast(`已复制到剪贴板`, 'success');
+            }).catch(err => {
+                // 新增：复制失败容错
+                showToast('复制失败，请手动复制', 'error');
+                console.error('复制失败:', err);
             });
         }
 
